@@ -9,10 +9,12 @@ var chanel = wav2D(0)(1)
 
 var tinit = 0
 var dt = frame*1
-var empreintes = Array(Array(Array(Int)),Int)
+var empreintes : Array[Int] = [0,0,0,0,0]
 
 for (i<- 0 to 9) {
+  println(empreintes(i))
   empreintes(i) =  Array(Array(wav2D(1)(tinit),wav2D(1)(tinit + dt*i),dt),tinit)
   }
 
 }
+
