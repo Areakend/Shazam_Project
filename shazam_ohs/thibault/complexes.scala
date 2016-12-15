@@ -1,10 +1,8 @@
-
-class complexes{
 import scala.math.{Pi,cos,sin,cosh,sinh,abs}
 import scala.collection.mutable.ArrayBuffer
 
-case class complexes(reel:Double, imaginaire:Double) {  
-  
+  case class complexes(reel:Double,imaginaire:Double) {
+
 	def -(a:complexes):complexes = complexes(reel - a.reel,imaginaire - a.imaginaire)
 			def +(a:complexes):complexes = complexes(reel + a.reel,imaginaire + a.imaginaire)
 			def /(a:Double):complexes = complexes(reel / a,imaginaire / a)
@@ -22,18 +20,6 @@ case class complexes(reel:Double, imaginaire:Double) {
 					}
 			}
 
+
 }
-
-def exp(z:complexes):complexes = {
-		val t = (cosh(z.reel) + sinh(z.reel))
-				complexes(cos(z.imaginaire), sin(z.imaginaire)) * t
-}
-}
-
-
-
-
-
-
-
 
