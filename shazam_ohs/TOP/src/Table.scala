@@ -2,7 +2,7 @@ object Table extends App {// Imports the API library
 import com.tncy.top.files.WavWrapper;
  
 // Source wav file
-var filePath : String = "/home/etudiants/ohanian1u/TOP/WAV_Chansons_completes_Mono_11025Hz/Conquest_of_Spaces_Mono-11025Hz.wav";
+var filePath : String = "C:/Users/Zaven/Desktop/TOP/shazam_ohs/Musique/WAV_Chansons_completes_Mono_11025Hz.wav";
  
 // Loads wrapped wav
 var wrappedWav : WavWrapper = new WavWrapper(filePath);

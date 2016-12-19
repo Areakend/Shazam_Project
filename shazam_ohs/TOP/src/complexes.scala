@@ -1,4 +1,4 @@
-import scala.math.{Pi,cos,sin,cosh,sinh,abs}
+import scala.math.{Pi,cos,sin,cosh,sinh,abs,sqrt}
 import scala.collection.mutable.ArrayBuffer
 
   case class complexes(reel:Double,imaginaire:Double) {
@@ -8,6 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 			def /(a:Double):complexes = complexes(reel / a,imaginaire / a)
 			def *(a:complexes):complexes = complexes(reel * a.reel - imaginaire * a.imaginaire,reel * a.imaginaire + imaginaire * a.reel)
 			def *(a:Double):complexes = complexes(reel * a, imaginaire * a)
+			def mod(a:complexes):complexes = complexes(sqrt(reel * a.reel + imaginaire * a.imaginaire), 0.00000) 
 
 			override def toString(): String = {
 					val x = "%1.5f" format reel
