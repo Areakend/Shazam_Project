@@ -123,4 +123,46 @@ object empreinte {
   }
   return empreinte
   }
+  def mememusique(L1:Array[Int], L2:Array[Int]): Boolean ={
+   def remove(L:Array[Int],q:Int):Array[Int] ={
+     var T:Array[Int]=Array()
+     for (i<- 0 to q-1) {
+       var temp2 : Array[Int] = Array( L(0) )
+       temp2 = temp2 ++ T
+       var T = temp2
+       var temp : Array[Int] = Array()
+       for (i<-1 to L.length -1) {
+         temp = temp ++ Array(L(i))
+       }
+      var L = temp
+     }
+     T=T ++ L
+     return T
+   }
+     var n=0   // pour arrêter la boucle quand une valeur similaire est trouvée
+      var m=0   //nombre de similitudes
+      var p=0 // indice de la valeur de L2
+    for (k<- 0 to L1.size -1) {
+     
+      while (p!= L2.size -1 && n==0) {
+        if (L1(k)==L2(p)) {
+          m+=1
+          n=1
+          remove(L2,p)
+        }
+        p+=1
+        
+      }
+    }
+    if (m>(90/100)*L2.size) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+  
+  def main(args: Array[String]): Unit = {
+    println("Hello, world!")
+  }
 }
