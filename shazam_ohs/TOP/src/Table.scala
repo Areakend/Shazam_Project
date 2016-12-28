@@ -17,13 +17,19 @@ var files : Array[String] = Utils.listFiles(directoryPath);
 // Source wav file
 
 var BDD : Array[Array[Array[Int]]] = Array(Array(Array()))
-   for (i<-0 to files.length) {
-     var filePath : String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz/" + files(i);     
-     var wrappedWav : WavWrapper = new WavWrapper(filePath);
-     var wav2D : Array[Array[Int]] = wrappedWav.getWav();
-     BDD = BDD ++ Array(wav2D)
-   }
-println(BDD)
+for (i<-0 to (files.length -1)) {
+  var filePath : String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz/" + files(i);     
+  var wrappedWav : WavWrapper = new WavWrapper(filePath);
+  var wav2D : Array[Array[Int]] = wrappedWav.getWav();
+  if (i==0) {
+    BDD(0) = wav2D
+    }
+  else {
+    BDD = BDD ++ Array(wav2D) 
+    }
+  }
+  
+println(BDD(1)(0)(0))
 
  
 // Loads wrapped wav
