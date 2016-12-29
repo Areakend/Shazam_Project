@@ -16,7 +16,10 @@ object empreinte {
       BDD = BDD ++ Array(wav2D) 
       }
   }
-  
+  //Test
+  //var BDD : Array[Array[Array[Array[Double]]]] =  Array(Array(Array(Array())))
+  //BDD = Array(Array( Array( Array( 1250, 3500, 3), Array(0) ), Array( Array(4500, 10580, 4), Array(5)),
+    //  Array( Array( 12500, 35000, 4), Array(0) ), Array( Array(45000, 100580, 6), Array(6)) ))
   def ReToIm(Tab: Array[Int]): Array[complexes] = {
     var l : Array[complexes]= Array()
     var n =Tab.length
@@ -138,18 +141,18 @@ object empreinte {
   return empreinte
   }
   
-  def mememusique(i : Int, E:Array[Array[Array[Double]]]): Int ={
+  def mememusique(i : Int, E:Array[Array[Array[Double]]]): Double ={
     var triplet : Array[Double] = E(0)(0)
     var M : Array[Array[Array[Double]]] = Fempreinte(BDD(i)) //empreinte de la musique i
-    var lm : Int = M.length
+    var lm : Int = (M.length)/4
     var le = E.length
     var T1 : Array[Double] = Array(-1)
-    var o : Int = 0
-    var n : Int = 0
-    var f : Int = BDD(i)(0)(0) //frequence de la musique
+    var o : Double = 0.0
+    var n : Double = 0.0
+    //var f : Double = BDD(i)(0)(0)(0) //frequence de la musique //a modifier pour test (int et (0) )
     
-    for (j<-0 to (lm -1)) {
-      if (triplet == M(j)(0)) {
+    for (j<-0 to (lm-1)) {
+      if (triplet.deep == M(j)(0).deep) {
         T1(0) = 0
         T1 = T1 ++ Array(M(j)(1)(0)) //tableau des occurences de la premiere empreinte
       }
@@ -159,14 +162,14 @@ object empreinte {
     }
     else {
       o = o + 1
-      for (k<-1 to T1.length -1) {
+      for (k<-0 to T1.length -2 ) { //k= ?
         for (j<- 1 to (le -1)) {      
-          var t : Double = E(j)(1)(0) + T1(k)
+          var t : Double = E(j)(1)(0) + T1(k+1)
          // var t2 : Double = t/f  
-          for (m<-0 to lm -1) {
-            if (t == M(m)(1)) {
+          for (m<-1 to lm ) {
+            if (t == M(m)(1)(0)) {
               triplet = E(j)(0)
-              if (triplet == M(m)(0)) {
+              if (triplet.deep == M(m)(0).deep) {
                 o = o +1
               }
               else {
@@ -180,10 +183,11 @@ object empreinte {
           }
         }
     }
-    return (o / (o+n) )    
+    return (o / (o+n) )
   }
   
   def main(args: Array[String]): Unit = {
-    println("Hello, world!")
+    var t1 : Array[Array[Array[Double]]] = Array( Array( Array( 1250.0, 3500.0, 3.0), Array(0) ), Array( Array(4500, 10580, 4), Array(5)))
+    println(mememusique(0,t1))
   }
 }
