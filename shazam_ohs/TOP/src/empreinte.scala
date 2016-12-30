@@ -16,6 +16,13 @@ object empreinte {
       BDD = BDD ++ Array(wav2D) 
       }
   }
+  
+  def wav(musique : String) : Array[Array[Int]] = {
+    var filePath : String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Echantillons_connus_Mono_11025Hz/" + musique;     
+    var wrappedWav : WavWrapper = new WavWrapper(filePath)
+    var wav2D : Array[Array[Int]] = wrappedWav.getWav()
+    return wav2D
+  }
   //Test
   //var BDD : Array[Array[Array[Array[Double]]]] =  Array(Array(Array(Array())))
   //BDD = Array(Array( Array( Array( 1250, 3500, 3), Array(0) ), Array( Array(4500, 10580, 4), Array(5)),
@@ -116,32 +123,32 @@ object empreinte {
  
   def Fempreinte(wav2D : Array[Array[Int]] = Array(Array(),Array())) : Array[Array[Array[Double]]] = {
     
-  var indices : Array[Int] = Array();
-  //var wav2D : Array[Array[Int]] = Array(Array(10),Array(10));
-  var frequence : Array[Double] = fftr(fft(ReToIm(wav2D(1))));
-  var amplitude : Array[Int] = wav2D(1);
-  var empreinte : Array[Array[Array[Double]]] = Array(Array(Array()));
-  var frame = wav2D(0)(0);
-  var dt : Double = 1/frame;
-  
-  //Tableau des indices des grandes amplitudes
-  
-  for (i<-0 to wav2D(1).length-1) {
-    if (wav2D(1)(i) > (7/8)*max(wav2D(1)))
-      indices = indices ++ Array(i);
+    var indices : Array[Int] = Array();
+    //var wav2D : Array[Array[Int]] = Array(Array(10),Array(10));
+    var frequence : Array[Double] = fftr(fft(ReToIm(wav2D(1))));
+    var amplitude : Array[Int] = wav2D(1);
+    var empreinte : Array[Array[Array[Double]]] = Array(Array(Array()));
+    var frame = wav2D(0)(0);
+    var dt : Double = 1/frame;
+    
+    //Tableau des indices des grandes amplitudes
+    
+    for (i<-0 to wav2D(1).length-1) {
+      if (wav2D(1)(i) > (7/8)*max(wav2D(1)))
+        indices = indices ++ Array(i);
+    }
+    
+    //On récupère les frequences correspondantes
+    
+    for (i<-0 to (frequence.length/2 -1)) {
+      var freq : Double = frequence(2*i);
+      var freq2 : Double = frequence(2*i+1);
+      empreinte = empreinte ++ Array( Array(Array(freq,freq2,(indices(i+1)-indices(i))*dt), Array(indices(i)*dt))) //*dt pour definir le temps et non interval d'indices
+    }
+    return empreinte
   }
   
-  //On récupère les frequences correspondantes
-  
-  for (i<-0 to (frequence.length/2 -1)) {
-    var freq : Double = frequence(2*i);
-    var freq2 : Double = frequence(2*i+1);
-    empreinte = empreinte ++ Array( Array(Array(freq,freq2,(indices(i+1)-indices(i))*dt), Array(indices(i)*dt))) //*dt pour definir le temps et non interval d'indices
-  }
-  return empreinte
-  }
-  
-  def mememusique(i : Int, E:Array[Array[Array[Double]]]): Double ={
+  def mememusique(i : Int, E:Array[Array[Array[Double]]], p: Int): Double ={
     var triplet : Array[Double] = E(0)(0)
     var M : Array[Array[Array[Double]]] = Fempreinte(BDD(i)) //empreinte de la musique i
     var lm : Int = (M.length)/4
@@ -158,7 +165,9 @@ object empreinte {
       }
     }
     if (T1(0) == -1 ) {
-      n = n + 1
+      n= n + 1
+ //     p = p + 1
+ //     mememusique(1,E.tail,p)
     }
     else {
       o = o + 1
@@ -183,11 +192,12 @@ object empreinte {
           }
         }
     }
-    return (o / (o+n) )
+    return (o / (o+n+p) )
   }
   
   def main(args: Array[String]): Unit = {
-    var t1 : Array[Array[Array[Double]]] = Array( Array( Array( 1250.0, 3500.0, 3.0), Array(0) ), Array( Array(4500, 10580, 4), Array(5)))
-    println(mememusique(0,t1))
+   // var t1 : Array[Array[Array[Double]]] = Array( Array( Array( 1250.0, 3500.0, 3.0), Array(0) ), Array( Array(4500, 10580, 4), Array(5)))
+    var m1 = Fempreinte(wav("Je_serai_Mono-11025Hz.wav"))
+    println(m1)
   }
 }
