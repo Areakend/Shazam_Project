@@ -42,33 +42,36 @@ object mememusique {
   }
   
   def pourcentage(M:Array[Array[Array[Double]]], E:Array[Array[Array[Double]]], T:Array[Array[Double]], o:Int, n:Int, k:Int, j:Int, m:Int, i:Int):Double = {
-    if (k == M.length-1) {return (o/(o+n))}
+    if (k == M.length-1) { o.toDouble / (o.toDouble+n.toDouble) }
     else {
       if (T(k) == Array() ) { pourcentage(M, E, T, o, n+1, k+1, 0, 0, 0) }
       else {
-        if ( T(k)(i) == M(m)(1)(0)) { 
-          if (E(j)(0).deep == M(m)(0).deep) { pourcentage(M, E, T, o+1, n, k+1, j+1, 0, 0) }
-          else {
-            if (m == M.length-1) { pourcentage(M, E, T, o, n+1, k+1, j+1, 0, 0) }
-            else {  pourcentage(M, E, T, o, n, k, j, m+1, 0) }
-          }    
-        }
+        if (i == T(k).length) { pourcentage(M, E, T, o, n+1, k+1, 0, 0, 0)  }
         else {
-          if (i == T(k).length-1) { pourcentage(M, E, T, o, n+1, k+1, j, 0, 0 ) }
-          else { pourcentage(M, E, T, o, n+1, k, j, 0, i+1) }
+          if (m == M.length) { pourcentage(M, E, T, o, n+1, k, j, 0, i+1) }
+          else {
+            if ( T(k)(i) == M(m)(1)(0)) { 
+              if (E(j)(0).deep == M(m)(0).deep) { pourcentage(M, E, T, o+1, n, k+1, j+1, 0, 0) }
+              else { pourcentage(M, E, T, o, n, k, j, m+1, i) }
+            }
+            else { pourcentage(M, E, T, o, n, k, j, m+1, i) } 
+          }
         }
       }
     }
   }
   
- /* def chemin_max(T:Array[Array[Double]]
+ //Pour tester dans le main
   
-  
-  def mememusique( i : Int, E:Array[Array[Array[Double]]]):String = {
-    var M : Array[Array[Array[Double]]] = Fempreinte(BDD(i))
-    var T_occur : Array[Array[Double]] = E_queue( E_occur(E,M, Array(Array(-1.0)),0,0) )
+ /*   def main(args: Array[String]): Unit = {
+    val E = Array(Array(Array(1.0,2.0,3.0),Array(0.0)),Array(Array(5.0,6.0,7.0),Array(4.0)))
+    val M = Array(Array(Array(1.0,2.0,3.0),Array(4.0)),Array(Array(5.0,6.0,7.0),Array(8.0)),Array(Array(9.0,10.0,11.0),Array(12.0)),Array(Array(1.0,2.0,3.0),Array(18.0)))
+    val T = E_queue( E_occur(E,M, Array(Array(-1.0)),0,0) )
+    println(T.deep)
+    println(pourcentage(M, E, T, 0, 0, 0, 0 , 0 , 0))
   }
   */
+ 
   
   
 }
