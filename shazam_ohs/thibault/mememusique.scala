@@ -13,7 +13,7 @@ object mememusique {
   }
   
   
-  def E_occur( E:Array[Array[Array[Double]]], M:Array[Array[Array[Double]]], T:Array[Array[Double]] , k:Int, c:Int):Array[Array[Double]] = {
+ /* def E_occur( E:Array[Array[Array[Double]]], M:Array[Array[Array[Double]]], T:Array[Array[Array[Double]]] , k:Int, c:Int):Array[Array[Double]] = {
     if (k == E.length) {
       T
     } else {
@@ -23,7 +23,7 @@ object mememusique {
       } else {
         if (E(k)(0).deep == M(c)(0).deep) {
           
-          T(k) = T(k) ++ Array(M(c)(1)(0))
+          T(k) = T(k) ++ Array( Array( M(c)(1)(0) , E(k)(1)(0) )  ) 
           E_occur( E, M, T, k, c+1)
         } else {
           E_occur( E, M, T, k, c+1)
@@ -31,7 +31,47 @@ object mememusique {
         
       }
     }
+  }*/
+  
+  def E_occur( E:Array[Array[Array[Double]]], M:Array[Array[Array[Double]]]):Array[Double] = {
+    var T = new Array[Double](0)
+    for (k <- 0 to E.length-1) {
+      
+      for (c <- 0 to M.length-1) {
+         if (E(k)(0).deep == M(c)(0).deep) {
+           T = T ++ Array(  M(c)(1)(0) - E(k)(1)(0)   ) 
+         }
+      }
+     
+    }
+    T
   }
+  
+  def memediff(T:Array[Double]):Int = {
+    var res:Array[Int] = Array.fill(T.length)(0)    
+    for (i <- 0 to T.length-1) {
+      for (j <- 0 to T.length-1) {
+          if (T(i) == T(j)) { res(i) += 1}
+      }
+    }
+    max(res)
+  }
+  
+  def max(l: Array[Int]) : Int = {
+    var m : Int = 0
+    for (i<-0 to l.length-1) {
+            if (l(i)>m) {m=l(i)}
+    }
+    return(m);
+  }
+  
+  def indice_max(l: Array[Int]) : Int = {
+    var m : Int = 0
+    for (i<-0 to l.length-1) {
+      if (l(i)>m) {m=l(i)}
+    }
+    return(m);
+  } 
 
   def min(l: Array[Double]):Double = {
     var m : Double = l(0)
@@ -60,6 +100,22 @@ object mememusique {
       }
     }
   }
+  
+  [ [[1,2,3],[1,4]] []   ]
+  
+  def reconnaissance(chemin:String, BDD:Array[Array[Array[Double]]]):String = {
+    var nom_musique = ""
+    var tab_same:Array[Int] = Array()
+    var E:Array[Array[Array[Double]]] = Fempreinte(wav2D)
+    var M:Array[Array[Array[Double]]] = Array()
+    for (i <- 0 to BDD.length-1) {
+      M = BDD(i)
+      tab_same = tab_same ++ Array( memediff(E_occur(E,M)) )                     
+    }
+    indice_max(tab_same)
+  }
+
+  
   
  //Pour tester dans le main
   
