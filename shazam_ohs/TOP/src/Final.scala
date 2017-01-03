@@ -54,7 +54,8 @@ object Final {
     var compt: Int = 0
     var n: Int = t.length
     var ni: Int = n / 1024
-    var res: Array[Array[Int]] = Array()
+    var res: Array[Array[Int]] = Array(Array())
+    res(0) = tab(0)
     for (i <- 0 to (ni - 2)) {
       var temp: Array[Int] = Array()
       for (k <- 0 to 1024 - 1) {
@@ -156,12 +157,22 @@ object Final {
 
   def fftm(tab: Array[Array[Int]]): Array[Array[Double]] = {
     var n: Int = tab.length - 1
-    var res: Array[Array[Double]] = Array()
+    var res: Array[Array[Double]] = Array(Array())
+    res(0) = ItoD(tab(0))  
     println("Veuillez patientez.. Etape 1 sur 3")
-    for (i <- 0 to n) {
+    for (i <- 1 to n) {
       res = res ++ Array(fftr(fft(ReToIm(tab(i)))))
     }
     println("Veuillez patientez.. Etape 2 sur 3")
+    return res
+  }
+  
+  def ItoD(tab : Array[Int]) : Array[Double] = {
+    var res : Array[Double] = Array()
+    for (u<-0 to tab.length -1) {
+      var temp : Double = tab(u)
+      res = res ++ Array(temp)
+    }
     return res
   }
 
@@ -186,8 +197,7 @@ object Final {
     var fe: Double = tab(0)(0)
     var tmax: Array[Double] = Array()
     println("Etape1")
-    for (k <- 0 to freq.length - 1) {
-      println(freq.length - 1)
+    for (k <- 1 to freq.length - 1) {
       var max: Double = 0
       max = (freq(k).slice(0, 9).reduceLeft(_ max _))
       tmax = tmax ++ Array(max)
@@ -213,9 +223,8 @@ object Final {
 
     for (k <- 0 to freq.length - 1) {
       var j = 0
-      while (c < 6 && j < freq(k).length - 1) {
-        if (freq(k)(j) > mean) {
-          println(k)
+      while (c < 200 && j < freq(k).length - 1) {
+        if (freq(k)(j) > mean*0.5) {
           tres = tres ++ Array(Array(j * fe / 1024, k + 1))
           c = c + 1
         }
@@ -244,7 +253,7 @@ object Final {
       }
 
     }
-    T
+    return T
   }
 
   def memediff(T: Array[Double]): Int = {
@@ -254,7 +263,7 @@ object Final {
         if (T(i) == T(j)) { res(i) += 1 }
       }
     }
-    max(res)
+    return max(res)
   }
 
   def max(l: Array[Int]): Int = {
@@ -278,14 +287,17 @@ object Final {
     }
     return (res);
   }
-  def reconnaissance(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]]): String = {
+  def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]]): String = {
+    Console.out.flush()
     var tab_same: Array[Int] = Array()
+    println("coucou")
     var E: Array[Array[Array[Double]]] = empreinte(wav2D)
     var M: Array[Array[Array[Double]]] = Array()
     for (i <- 0 to bdde.length - 1) {
       M = bdde(i)
       tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
     }
+    println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
     return (files(indice_musique))
   }
@@ -301,6 +313,6 @@ object Final {
     println("Start")
     var bdde = BDDE(BDD)
     println("Next")
-    println(reconnaissance(m1, bdde))
+    println(reconnaissance_m(m1, bdde))
   }
 }
