@@ -2,8 +2,8 @@ import java.io._
 import scala.io.Source
 
 object FiletoTab {
-
-  def FiletoTab(i: Int): Array[Array[Array[Double]]] = {
+  
+  def FiletoTab(i: Int, fichiers: Array[String], dirPath: String): Array[Array[Array[Double]]] = {
     var res: Array[Array[Array[Double]]] = Array()
     var marq: Array[Array[Double]] = Array()
     var f1 = 0.0
@@ -11,7 +11,7 @@ object FiletoTab {
     var dt = 0.0
     var t = 0.0
     var cmp = 0
-    for (line <- Source.fromFile("BDDE_" + files(i) + ".txt").getLines()) {
+    for (line <- Source.fromFile(dirPath + fichiers(i)).getLines()) {
       if (cmp == 4) {
         cmp = 0
         marq = Array(Array(0.0, 0.0, 0.0), Array(0.0))
@@ -37,5 +37,6 @@ object FiletoTab {
     }
     res
   }
-
+  
+  
 }
