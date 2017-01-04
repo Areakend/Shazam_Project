@@ -29,13 +29,13 @@ object Final {
   }
 
   def downsampling(tab: Array[Array[Int]]): Array[Array[Int]] = {
-    var res: Array[Array[Int]] = Array(Array())
+    var res: Array[Array[Int]] = Array(Array(),Array())
     res(0) = tab(0)
     if (tab(0)(0) == 11025) {
       return tab
     }
-    if (tab(0)(0) == 22025) {
-      for (i <- 0 to tab.length / 2 - 1) {
+    if (tab(0)(0) == 22050) {
+      for (i <- 0 to (tab.length / 2) - 1) {
         var mean: Int = 0
         for (j <- 0 to 1) {
           mean = mean + tab(1)(i * 2 + j)
@@ -272,29 +272,15 @@ object Final {
   def E_occur(E: Array[Array[Array[Double]]], M: Array[Array[Array[Double]]]): Array[Double] = {
     var T = new Array[Double](0)
     println("Recherche des occurences")
-    for (k <- 0 to E.length - 5) {
+    var n : Int = E.length -5 
+    for (k <- 0 to n) {
           var test : Int  = 0
       for (c <- 0 to M.length - 5) {
         if ((E(k)(0).deep == M(c)(0).deep)) {
-//         test = test + 1
-//       }
-//        if (E(k+1)(0).deep == M(c+1)(0).deep) {
-//         test = test +1 
-//        }
-//        if (E(k+2)(0).deep == M(c+2)(0).deep) {
-//          test = test + 1
-//        }
-//        if (E(k+3)(0).deep == M(c+3)(0).deep) {
-//          test = test + 1-
-//        }
-//        if (E(k+4)(0).deep == M(c+4)(0).deep) {
-//          test = test + 1
-//        }
-//        if (test > 1) {
           T = T ++ Array(M(c)(1)(0) - E(k)(1)(0))
         }
       }
-          println( k + " sur " + E.length)
+          println( k + " sur " + n)
     }
     return T
   }
@@ -331,16 +317,17 @@ object Final {
     }
     return (res);
   }
-  def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]]): String = {
+  def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]], Fe : Int): String = {
     var tab_same: Array[Double] = Array()
     var E: Array[Array[Array[Double]]] = empreinte(wav2D)
     var M: Array[Array[Array[Double]]] = Array()
     for (i <- 0 to bdde.length - 1) {
-      M = bdde(i)
-      tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
+      if (BDD(i)(0)(0) == Fe) {
+        M = bdde(i)
+        tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
+      }
     }
-    //println(E_occur(E,M).deep)
-    println(tab_same.deep)
+    //println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
     return (files(indice_musique.toInt))
   }
@@ -352,10 +339,11 @@ object Final {
   }
 
   def main(args: Array[String]): Unit = {
-    var m1 = wav("Je_serai_Mono-11025Hz.wav")
+    var m1 = wav("Je_serai_Mono-22050Hz.wav")
+    var Fe : Int = m1(0)(0)
     println("Start")
     var bdde = BDDE(BDD)
     println("Next")
-    println(reconnaissance_m(m1, bdde))
+    println(reconnaissance_m(m1, bdde, Fe))
   } 
 }
