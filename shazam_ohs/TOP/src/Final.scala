@@ -4,23 +4,50 @@ object Final {
   import scala.math.{ Pi, cos, sin, cosh, sinh, abs, sqrt }
   import com.tncy.top.files.WavWrapper;
   import com.tncy.top.files.Utils;
-  var directoryPath: String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz";
-  var files: Array[String] = Utils.listFiles(directoryPath);
+  var m1 = wav("Je_serai-11025Hz.wav")
+  var Fe: Int = m1(0)(0)
+  var Chanel: Int = m1(0)(1)
   var BDD: Array[Array[Array[Int]]] = Array()
+  var Hz: String = ""
+  var ch: String = ""
+  if (Fe == 11025) {
+    Hz = "11k"
+  }
+  if (Fe == 22050) {
+    Hz = "11k"
+  }
+  if (Fe == 44100) {
+    Hz = "11k"
+  }
+  if (Chanel == 1) {
+    ch = "Mono"
+  }
+  if (Chanel == 2) {
+    ch = "Stereo"
+  }
+  var directoryPath: String = "C:/Users/Zaven/Desktop/Projet/Musique/" + ch + "_" + Hz
+  var files: Array[String] = Utils.listFiles(directoryPath)
   for (i <- 0 to (files.length - 1)) {
-    var filePath: String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz/" + files(i);
+
+    var filePath : String = "C:/Users/Zaven/Desktop/Projet/Musique/" + ch + "_" + Hz + "/" + files(i)
     var wrappedWav: WavWrapper = new WavWrapper(filePath);
     var wav2D: Array[Array[Int]] = wrappedWav.getWav();
     BDD = BDD ++ Array(wav2D)
   }
 
+def min(a : Int, b : Int) : Int = {
+  if (a<b) {
+    return a
+  }
+  return b
+}
+
   def moyenneStereo(wav2D: Array[Array[Int]]): Array[Array[Int]] = {
-    var mono: Array[Array[Int]] = Array(Array())
-    mono(0) = wav2D(0)
+    var mono: Array[Array[Int]] = wav2D.slice(0,0)
     if ((wav2D(0)(1) == 2)) {
-      for (i <- 0 to wav2D(1).length - 1) {
-        var temp: Int = (wav2D(1)(i) + wav2D(2)(i)) / 2
-        mono(1) = mono(1) ++ Array(temp)
+      var n : Int = min(wav2D(1).length, wav2D(2).length)
+      for (i <- 0 to n - 1) {
+        mono = mono ++ Array(Array(wav2D(1)(i) + wav2D(2)(i)))
       }
       return mono
     } else {
@@ -317,15 +344,13 @@ object Final {
     }
     return (res);
   }
-  def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]], Fe : Int): String = {
+  def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]]): String = {
     var tab_same: Array[Double] = Array()
     var E: Array[Array[Array[Double]]] = empreinte(wav2D)
     var M: Array[Array[Array[Double]]] = Array()
     for (i <- 0 to bdde.length - 1) {
-      if (BDD(i)(0)(0) == Fe) {
-        M = bdde(i)
-        tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
-      }
+      M = bdde(i)
+      tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
     }
     //println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
@@ -339,11 +364,13 @@ object Final {
   }
 
   def main(args: Array[String]): Unit = {
-    var m1 = wav("Je_serai_Mono-22050Hz.wav")
     var Fe : Int = m1(0)(0)
+    var Chanel : Int = m1(0)(1)
     println("Start")
+    println(directoryPath)
+
     var bdde = BDDE(BDD)
     println("Next")
-    println(reconnaissance_m(m1, bdde, Fe))
+    println(reconnaissance_m(m1, bdde))
   } 
 }
