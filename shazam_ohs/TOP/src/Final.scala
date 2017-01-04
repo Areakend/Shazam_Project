@@ -4,7 +4,7 @@ object Final {
   import scala.math.{ Pi, cos, sin, cosh, sinh, abs, sqrt }
   import com.tncy.top.files.WavWrapper;
   import com.tncy.top.files.Utils;
-  var m1 = wav("Je_serai-11025Hz.wav")
+  var m1 = wav("The_Raiders_March_Mono.wav")
   var Fe: Int = m1(0)(0)
   var Chanel: Int = m1(0)(1)
   var BDD: Array[Array[Array[Int]]] = Array()
@@ -48,6 +48,7 @@ def min(a : Int, b : Int) : Int = {
       var n : Int = min(wav2D(1).length, wav2D(2).length)
       for (i <- 0 to n - 1) {
         mono = mono ++ Array(Array(wav2D(1)(i) + wav2D(2)(i)))
+        println("Conversion en Mono " + i + "sur " + n)
       }
       return mono
     } else {
@@ -352,9 +353,12 @@ def min(a : Int, b : Int) : Int = {
       M = bdde(i)
       tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
     }
-    //println(tab_same.deep)
+    println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
-    return (files(indice_musique.toInt))
+    if (tab_same(indice_musique.toInt) < 250) {
+      return("Musique inconnue")
+    }
+    return ("La musique est extraite de " + files(indice_musique.toInt))
   }
 
   def module(C: complexes): Double = {
