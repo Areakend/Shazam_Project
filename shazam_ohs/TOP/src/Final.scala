@@ -6,16 +6,12 @@ object Final {
   import com.tncy.top.files.Utils;
   var directoryPath: String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz";
   var files: Array[String] = Utils.listFiles(directoryPath);
-  var BDD: Array[Array[Array[Int]]] = Array(Array(Array()))
+  var BDD: Array[Array[Array[Int]]] = Array()
   for (i <- 0 to (files.length - 1)) {
     var filePath: String = "C:/Users/Zaven/Desktop/Projet/Musique/WAV_Chansons_completes_Mono_11025Hz/" + files(i);
     var wrappedWav: WavWrapper = new WavWrapper(filePath);
     var wav2D: Array[Array[Int]] = wrappedWav.getWav();
-    if (i == 0) {
-      BDD(0) = wav2D
-    } else {
-      BDD = BDD ++ Array(wav2D)
-    }
+    BDD = BDD ++ Array(wav2D)
   }
 
   def moyenneStereo(wav2D: Array[Array[Int]]): Array[Array[Int]] = {
@@ -35,14 +31,23 @@ object Final {
   def downsampling(tab: Array[Array[Int]]): Array[Array[Int]] = {
     var res: Array[Array[Int]] = Array(Array())
     res(0) = tab(0)
-    var n: Int = tab.length / 4
     if (tab(0)(0) == 11025) {
       return tab
     }
-    for (i <- 0 to n - 1) {
+    if (tab(0)(0) == 22025) {
+      for (i <- 0 to tab.length / 2 - 1) {
+        var mean: Int = 0
+        for (j <- 0 to 1) {
+          mean = mean + tab(1)(i * 2 + j)
+        }
+        res(1) = res(1) ++ Array(mean / 2)
+      }
+      return res
+    }
+    for (i <- 0 to tab.length / 4 - 1) {
       var mean: Int = 0
       for (j <- 0 to 3) {
-        mean = mean + tab(1)(n * 4 + j)
+        mean = mean + tab(1)(i * 4 + j)
       }
       res(1) = res(1) ++ Array(mean / 4)
     }
@@ -56,7 +61,7 @@ object Final {
     var ni: Int = n / 1024
     var res: Array[Array[Int]] = Array(Array())
     res(0) = tab(0)
-    for (i <- 0 to (ni - 2)) {
+    for (i <- 0 to (ni - 1)) {
       var temp: Array[Int] = Array()
       for (k <- 0 to 1024 - 1) {
         temp = temp ++ Array(t(i*1024 + k))
@@ -202,57 +207,63 @@ object Final {
     }
     return tabres
   }
+  
+  def FofInterest(tab : Array[Double]) : Array[Double] = {
+      var tmax : Array[Double] = Array()
+      var max: Double = 0
+      max = tab.slice(0, 9).reduceLeft(_ max _)
+      tmax = tmax ++ Array(max)
+      max = (tab.slice(10, 19).reduceLeft(_ max _))
+      tmax = tmax ++ Array(max)
+      max = (tab.slice(20, 39).reduceLeft(_ max _))
+      tmax = tmax ++ Array(max)
+      max = (tab.slice(40, 79).reduceLeft(_ max _))
+      tmax = tmax ++ Array(max)
+      max = (tab.slice(80, 159).reduceLeft(_ max _))
+      tmax = tmax ++ Array(max)
+      max = (tab.slice(160, 511).reduceLeft(_ max _))
+      tmax = tmax ++ Array(max)
+      var indices : Array[Int] = Array()
+      indices = indices ++ Array(indice_max(tab.slice(0,9)).toInt)
+      indices = indices ++ Array(indice_max(tab.slice(10,19)).toInt)
+      indices = indices ++ Array(indice_max(tab.slice(20, 39)).toInt)
+      indices = indices ++ Array(indice_max(tab.slice(40, 79)).toInt)
+      indices = indices ++ Array(indice_max(tab.slice(80, 159)).toInt)
+      indices = indices ++ Array(indice_max(tab.slice(160, 511)).toInt)
+      var mean: Double = 0.0
+      for (j <- 0 to 5) {
+        mean = mean + tmax(j)
+      }
+      mean = mean / 6
+      var tres: Array[Double] = Array()
+      for (i <- 0 to tmax.length - 1) {
+        if (tmax(i) > mean) {
+          tres = tres ++ Array(indices(i).toDouble)
+        }
+      }
+      return tres
+  }
 
   def empreinte(tab: Array[Array[Int]]): Array[Array[Array[Double]]] = {
-    var t1: Array[Double] = Array()
-    var t2: Array[Double] = Array()
-    var t3: Array[Double] = Array()
-    var t4: Array[Double] = Array()
-    var t5: Array[Double] = Array()
-    var t6: Array[Double] = Array()
-    var test0 : Array[Array[Int]] = moyenneStereo(tab)
-    var test1 : Array[Array[Int]] = downsampling(test0)
-    var test2 : Array[Array[Int]] = decoupe(test1)
+    var test0: Array[Array[Int]] = moyenneStereo(tab)
+    var test1: Array[Array[Int]] = downsampling(test0)
+    var test2: Array[Array[Int]] = decoupe(test1)
     var freqM: Array[Array[Double]] = fftm(test2)
     var freq: Array[Array[Double]] = MtoC(freqM)
     var fe: Double = tab(0)(0)
     var tmax: Array[Double] = Array()
-    for (k <- 1 to freq.length - 1) {
-      var max: Double = 0
-      max = (freq(k).slice(0, 9).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-      max = (freq(k).slice(10, 19).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-      max = (freq(k).slice(20, 39).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-      max = (freq(k).slice(40, 79).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-      max = (freq(k).slice(80, 159).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-      max = (freq(k).slice(160, 511).reduceLeft(_ max _))
-      tmax = tmax ++ Array(max)
-    }
-    var mean: Double = 0.0
-    for (j <- 0 to 5) {
-      mean = mean + tmax(j)
-    }
-    mean = mean / 6
     var tres: Array[Array[Double]] = Array()
-    for (k <- 0 to freq.length - 1) {
-    var c: Int = 0
-      var j = -1
-      while ( c < 10 && j < freq(k).length - 1) {
-        j = j + 1
-        if (freq(k)(j) > mean * 0.0) {
-          tres = tres ++ Array(Array( j.toDouble , k + 1))
-          c = c + 1
-        }
-      }
-    }  
     var emp: Array[Array[Array[Double]]] = Array()
+    for (i <- 1 to freq.length - 1) {
+      tres = tres ++ Array(FofInterest(freq(i)))
+    }
     for (j <- 0 to tres.length - 8) {
-      for (k <- 3 to 7) {
-        emp = emp ++ Array(Array(Array(tres(j)(0), tres(j + k)(0), tres(j + k)(1) - tres(j)(1)), Array(tres(j)(1))))
+      if (tres(j).length != 0) {
+        for (k <- 3 to 7) {
+          for (m <- 0 to tres(j + k).length - 1) {
+            emp = emp ++ Array(Array(Array(tres(j)(0), tres(j + k)(m), k.toDouble), Array(j.toDouble)))
+          }
+        }
       }
     }
     return emp
@@ -265,30 +276,30 @@ object Final {
           var test : Int  = 0
       for (c <- 0 to M.length - 5) {
         if ((E(k)(0).deep == M(c)(0).deep)) {
-          //test = test + 1
-        //}
-       // if (E(k+1)(0).deep == M(c+1)(0).deep) {
-         //test = test +1 
-        //}
-        //if (E(k+2)(0).deep == M(c+2)(0).deep) {
-          //test = test + 1
-        //}
-        //if (E(k+3)(0).deep == M(c+3)(0).deep) {
-          //test = test + 1
-        //}
-        //if (E(k+4)(0).deep == M(c+4)(0).deep) {
-          //test = test + 1
-        //}
-        //if (test > 3) {
+//         test = test + 1
+//       }
+//        if (E(k+1)(0).deep == M(c+1)(0).deep) {
+//         test = test +1 
+//        }
+//        if (E(k+2)(0).deep == M(c+2)(0).deep) {
+//          test = test + 1
+//        }
+//        if (E(k+3)(0).deep == M(c+3)(0).deep) {
+//          test = test + 1-
+//        }
+//        if (E(k+4)(0).deep == M(c+4)(0).deep) {
+//          test = test + 1
+//        }
+//        if (test > 1) {
           T = T ++ Array(M(c)(1)(0) - E(k)(1)(0))
         }
-        println( c + " sur " + M.length)
       }
+          println( k + " sur " + E.length)
     }
     return T
   }
 
-  def memediff(T: Array[Double]): Int = {
+  def memediff(T: Array[Double]): Double = {
     println("Calcul des similitudes")
     var res: Array[Int] = Array.fill(T.length)(0)
     for (i <- 0 to T.length - 1) {
@@ -309,9 +320,9 @@ object Final {
     return (m);
   }
 
-  def indice_max(l: Array[Int]): Int = {
-    var m: Int = 0
-    var res: Int = 0
+  def indice_max(l: Array[Double]): Double = {
+    var m: Double = 0
+    var res: Double = 0
     for (i <- 0 to l.length - 1) {
       if (l(i)> m) {
         m = l(i)
@@ -321,7 +332,7 @@ object Final {
     return (res);
   }
   def reconnaissance_m(wav2D: Array[Array[Int]], bdde: Array[Array[Array[Array[Double]]]]): String = {
-    var tab_same: Array[Int] = Array()
+    var tab_same: Array[Double] = Array()
     var E: Array[Array[Array[Double]]] = empreinte(wav2D)
     var M: Array[Array[Array[Double]]] = Array()
     for (i <- 0 to bdde.length - 1) {
@@ -331,7 +342,7 @@ object Final {
     //println(E_occur(E,M).deep)
     println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
-    return (files(indice_musique))
+    return (files(indice_musique.toInt))
   }
 
   def module(C: complexes): Double = {
@@ -341,10 +352,10 @@ object Final {
   }
 
   def main(args: Array[String]): Unit = {
-    var m1 = wav("The_Raiders_March_Mono-11025Hz.wav")
+    var m1 = wav("Je_serai_Mono-11025Hz.wav")
     println("Start")
     var bdde = BDDE(BDD)
     println("Next")
     println(reconnaissance_m(m1, bdde))
-  }
+  } 
 }
