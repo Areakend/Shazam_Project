@@ -4,7 +4,7 @@ object Final {
   import scala.math.{ Pi, cos, sin, cosh, sinh, abs, sqrt }
   import com.tncy.top.files.WavWrapper;
   import com.tncy.top.files.Utils;
-  var m1 = wav("The_Raiders_March_Mono.wav")
+  var m1 = wav("The_Raiders_March_Mono-11025Hz.wav")
   var Fe: Int = m1(0)(0)
   var Chanel: Int = m1(0)(1)
   var BDD: Array[Array[Array[Int]]] = Array()
@@ -14,10 +14,10 @@ object Final {
     Hz = "11k"
   }
   if (Fe == 22050) {
-    Hz = "11k"
+    Hz = "22k"
   }
   if (Fe == 44100) {
-    Hz = "11k"
+    Hz = "44k"
   }
   if (Chanel == 1) {
     ch = "Mono"
@@ -63,7 +63,7 @@ def min(a : Int, b : Int) : Int = {
       return tab
     }
     if (tab(0)(0) == 22050) {
-      for (i <- 0 to (tab.length / 2) - 1) {
+      for (i <- 0 to (tab(1).length / 2) - 1) {
         var mean: Int = 0
         for (j <- 0 to 1) {
           mean = mean + tab(1)(i * 2 + j)
@@ -72,7 +72,7 @@ def min(a : Int, b : Int) : Int = {
       }
       return res
     }
-    for (i <- 0 to tab.length / 4 - 1) {
+    for (i <- 0 to tab(1).length / 4 - 1) {
       var mean: Int = 0
       for (j <- 0 to 3) {
         mean = mean + tab(1)(i * 4 + j)
@@ -299,7 +299,6 @@ def min(a : Int, b : Int) : Int = {
 
   def E_occur(E: Array[Array[Array[Double]]], M: Array[Array[Array[Double]]]): Array[Double] = {
     var T = new Array[Double](0)
-    println("Recherche des occurences")
     var n : Int = E.length -5 
     for (k <- 0 to n) {
           var test : Int  = 0
@@ -308,13 +307,11 @@ def min(a : Int, b : Int) : Int = {
           T = T ++ Array(M(c)(1)(0) - E(k)(1)(0))
         }
       }
-          println( k + " sur " + n)
     }
     return T
   }
 
   def memediff(T: Array[Double]): Double = {
-    println("Calcul des similitudes")
     var res: Array[Int] = Array.fill(T.length)(0)
     for (i <- 0 to T.length - 1) {
       for (j <- 0 to T.length - 1) {
@@ -349,16 +346,19 @@ def min(a : Int, b : Int) : Int = {
     var tab_same: Array[Double] = Array()
     var E: Array[Array[Array[Double]]] = empreinte(wav2D)
     var M: Array[Array[Array[Double]]] = Array()
-    for (i <- 0 to bdde.length - 1) {
-      M = bdde(i)
-      tab_same = tab_same ++ Array(memediff(E_occur(E, M)))
+    for (i <- 1 to bdde.length) {
+      M = bdde(i-1)
+    println("Recherche des occurences des marqueurs la musique " + i + " (il y a " + bdde.length + " musiques)")
+      var temp = E_occur(E, M)
+    println("Calcul des similitudes de la musique " + i + " (il y a " + bdde.length + " musiques)" )
+      tab_same = tab_same ++ Array(memediff(temp))
     }
-    println(tab_same.deep)
+    //println(tab_same.deep)
     var indice_musique = indice_max(tab_same)
     if (tab_same(indice_musique.toInt) < 250) {
-      return("Musique inconnue")
+      return ("Musique inconnue")
     }
-    return ("La musique est extraite de " + files(indice_musique.toInt))
+    return ("La musique est " + files(indice_musique.toInt) + " !!")
   }
 
   def module(C: complexes): Double = {
@@ -371,10 +371,9 @@ def min(a : Int, b : Int) : Int = {
     var Fe : Int = m1(0)(0)
     var Chanel : Int = m1(0)(1)
     println("Start")
-    println(directoryPath)
-
+    //println(directoryPath)
     var bdde = BDDE(BDD)
-    println("Next")
+    println("Recherche de la musique")
     println(reconnaissance_m(m1, bdde))
   } 
 }
